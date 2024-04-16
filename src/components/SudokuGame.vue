@@ -70,15 +70,15 @@
                     <td>9</td>
                 </tr>
                 <tr>
-                    <td class="eraser">
+                    <td class="eraser" colspan="3">
                         <img src="../../public/img/eraser.png" alt="">
                         <p>Eraser</p>
                     </td>
-                    <td class="Reset" @click="handleResetClick">
+                    <td class="Reset" @click="handleResetClick" colspan="3">
                         <img src="../../public/img/reset.png" alt="">
                         <p>Reset</p>
                     </td>
-                    <td class="Hint">
+                    <td class="Hint" colspan="3">
                         <img src="../../public/img/hint.png" alt="">
                         <p>Hint</p>
                     </td>
@@ -106,6 +106,7 @@ export default {
             // 각 셀의 힌트 카운터 배열 초기화  
             hintCounts: 0,
             screenWidth:window.innerWidth,
+            elKey: null,
         };
     },
     computed: {
@@ -122,14 +123,31 @@ export default {
 
         handleResize() {
             this.screenWidth = window.innerWidth;
+            this.handleKeyClick()
         },
         exOn() {
             console.log('클릭')
             this.$emit('test2')
         },
+        device(n){
+                if(n){
+                    this.elKey = document.querySelectorAll('.keyboard td');
+                }else{
+                    this.elKey = document.querySelectorAll('.m_keyboard td');
+                }
+        },
         handleKeyClick() {
+            
+            const mq = window.matchMedia('(min-width: 920px)');
+           
+            this.device(mq.matches)
+            
+            mq.addListener((e)=>{
+                this.device(e.matches)
+                //td 불켜진거 끄기 제발 해라
+            })
+            
             const elTd = document.querySelectorAll('.block td');
-            const elKey = document.querySelectorAll('.keyboard td');
             let num = 0;
             elTd.forEach((td, idx) => {
                 if (td.innerHTML === '')
@@ -139,7 +157,7 @@ export default {
                         elTd[num].classList.remove('active')
                         elTd[idx].classList.add('active');
                         num = idx;
-                        elKey.forEach((td2, idx2) => {
+                        this.elKey.forEach((td2, idx2) => {
                             td2.onclick = () => {
                                 
                                 if (idx2 < 9) {
@@ -147,12 +165,9 @@ export default {
                                     td.innerHTML = idx2 + 1
                                     this.copy2 = this.board.map(obj => [...obj]);
                                     this.answer(this.copy, this.copy2)
-                                    // console.log(this.copy, '정답값')
-                                    // console.log(this.copy2, '입력정답')
                                 } else if (idx2 == 9) {
                                     td.innerHTML = ''
                                 } else if (idx2 == 11 && this.hintCounts < 3) {
-                                    console.log(this.copy[i][j])
                                     td.innerHTML = this.copy[i][j]
                                     this.hintCounts++
                                     alert(`힌트가 ${3 - this.hintCounts}개 남았습니다.`)
@@ -172,14 +187,12 @@ export default {
             this.handleKeyClick()
         },
         handleDifficultyChange(e) {
-            console.log(e.target.value, '뭐임/')
             this.$store.commit('gameType', e.target.value);
             this.generateIntermediateSudoku()
             this.resetTimer()
             this.handleKeyClick()
         },
         answer(a, b) {
-            // console.log(a,b)
             if (JSON.stringify(a) === JSON.stringify(b)) {
                 alert('성공!')
                 this.pauseTimer()
@@ -218,7 +231,6 @@ export default {
             this.fill3x3Region(board, 6, 6);
             this.solveSudoku(board);
             this.difficultSelect(this.difficult, board);
-            // this.removeNumbers(board, 1);
             this.displaySudoku(board);
 
 
@@ -232,7 +244,7 @@ export default {
             console.log(this.difficult, '타입')
             switch (type) {
                 case 'easy':
-                    this.removeNumbers(board, 30)
+                    this.removeNumbers(board, 1)
                     break;
                 case 'normal':
                     this.removeNumbers(board, 35)
@@ -270,17 +282,11 @@ export default {
         //보드에 0값 없애기 작업
         solveSudoku(board) {
             const emptyCell = this.findEmptyCell(board);
-            // const AnswerBoard = []
             if (!emptyCell) {
                 this.copy = board.map(obj => [...obj]);
-                // console.log(this.copy[0][3],this.copy[0][4],this.copy[0][5],'비교')
-                console.log(this.copy, '정답')
 
-                // for (let j = 0; j < 9; j++) {
 
-                // }
-
-                return true; // 퍼즐이 모두 완성되었음을 의미합니다.
+                return true; // 퍼즐이 모두 완성
             }
             const [row, col] = emptyCell;
 
@@ -289,12 +295,11 @@ export default {
                 if (this.isValidMove(board, row, col, num)) {
 
                     board[row][col] = num;
-                    // console.log(row,col,board[row][col],'중복')
                     if (this.solveSudoku(board)) {
                         return true;
                     }
 
-                    board[row][col] = 0; // Backtrack
+                    board[row][col] = 0;
                 }
             }
 
@@ -310,7 +315,6 @@ export default {
             // 열 검사
             for (let i = 0; i < 9; i++) {
                 if (board[i][col] === num) {
-                    // console.log(board[0][col],num,'세로검사')
                     return false;
                 }
             }
@@ -829,7 +833,7 @@ export default {
                 }
 
                 tr:nth-of-type(2) {
-                    background-color: #D9D9D9;
+                    background-color: #ffffff;
                 }
 
 

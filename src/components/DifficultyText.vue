@@ -43,12 +43,7 @@ export default {
         }
     },
     mounted() {
-
-        // const elBtn = document.querySelectorAll('.buttons button'),
-
-        // elBtn.forEach((a, idx)=>{
-
-        // })       
+     
     }
 }
 </script>

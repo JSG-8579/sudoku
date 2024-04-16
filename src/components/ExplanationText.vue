@@ -22,7 +22,6 @@ export default {
 
 }
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @media screen and (min-width: 920px) {
   .explan {
@@ -72,8 +71,8 @@ export default {
     &.active {
       display: block;
       position: absolute;
-      top: 10%;
-      left: 10%;
+      top: 5%;
+      left: 0;
       background: rgba(0, 0, 0, 0.8);
       width: 500px;
       height: 700px;
