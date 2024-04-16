@@ -21,11 +21,14 @@
 </div>
 <h1>Page 구성</h1>
 <ul>
-  <li>App.js</li>
-  <li>Home.jsx</li>
-  <li>About.jsx</li>
-  <li>Project.jsx</li>
-  <li>Contact.jsx</li>
+  <li>HomeView.Vue</li>
+  <li>SudokuGameView.Vue</li>
+</ul>
+<h1>Component 구성</h1>
+<ul>
+  <li>SudokuGame.Vue</li>
+  <li>DifficultyText.Vue</li>
+  <li>ExplanationText.Vue</li>
 </ul>
 <h1>Page 설명</h1>
 <ul>
