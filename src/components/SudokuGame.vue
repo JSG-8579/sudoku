@@ -1,5 +1,18 @@
 <template>
     <div class="game active3">
+        <div class="modal" v-if="showModal">
+            <div class="modal-content">
+
+                <p>스도쿠를 성공적으로 완료했습니다!</p>
+                <p>난이도: {{ difficult }}</p>
+                <p>클리어 시간: {{ formatTime }}</p>
+                <input type="text" v-model="playerName" placeholder="이름을 입력하세요...">
+                <div class="buttons">
+                    <button @click="submitName">등록</button>
+                    <button @click="closeModal">취소</button>
+                </div>
+            </div>
+        </div>
         <div class="header">
             <div class="sudoku_title">
                 <p>S</p>
@@ -105,8 +118,10 @@ export default {
             isRunning: false,
             // 각 셀의 힌트 카운터 배열 초기화  
             hintCounts: 0,
-            screenWidth:window.innerWidth,
+            screenWidth: window.innerWidth,
             elKey: null,
+            showModal: false,
+            playerName: '',
         };
     },
     computed: {
@@ -121,6 +136,23 @@ export default {
     },
     methods: {
 
+        openModal(a) {
+            this.showModal = true;
+            this.time == a
+        },
+        closeModal() {
+            this.showModal = false;
+            window.location.reload()
+            //페이지 리로딩 말구 딴거 없나?
+        },
+        submitName() {
+            //이걸로 보내기
+            console.log('플레이어 이름:', this.formatTime, this.playerName);
+            this.closeModal();
+            window.location.reload()
+            
+        },
+
         handleResize() {
             this.screenWidth = window.innerWidth;
             this.handleKeyClick()
@@ -129,24 +161,24 @@ export default {
             console.log('클릭')
             this.$emit('test2')
         },
-        device(n){
-                if(n){
-                    this.elKey = document.querySelectorAll('.keyboard td');
-                }else{
-                    this.elKey = document.querySelectorAll('.m_keyboard td');
-                }
+        device(n) {
+            if (n) {
+                this.elKey = document.querySelectorAll('.keyboard td');
+            } else {
+                this.elKey = document.querySelectorAll('.m_keyboard td');
+            }
         },
         handleKeyClick() {
-            
+
             const mq = window.matchMedia('(min-width: 920px)');
-           
+
             this.device(mq.matches)
-            
-            mq.addListener((e)=>{
+
+            mq.addListener((e) => {
                 this.device(e.matches)
                 //td 불켜진거 끄기 제발 해라
             })
-            
+
             const elTd = document.querySelectorAll('.block td');
             let num = 0;
             elTd.forEach((td, idx) => {
@@ -159,7 +191,7 @@ export default {
                         num = idx;
                         this.elKey.forEach((td2, idx2) => {
                             td2.onclick = () => {
-                                
+
                                 if (idx2 < 9) {
                                     this.board[i][j] = idx2 + 1;
                                     td.innerHTML = idx2 + 1
@@ -182,8 +214,8 @@ export default {
             })
         },
         handleResetClick() {
-            this.generateIntermediateSudoku()
             this.resetTimer()
+            this.generateIntermediateSudoku()
             this.handleKeyClick()
         },
         handleDifficultyChange(e) {
@@ -194,19 +226,24 @@ export default {
         },
         answer(a, b) {
             if (JSON.stringify(a) === JSON.stringify(b)) {
-                alert('성공!')
-                this.pauseTimer()
+                clearInterval(this.timer);
+                // this.pauseTimer()
+                this.openModal(this.time);
             }
         },
         startTimer() {
-            this.isRunning = true;
-            this.timer = setInterval(() => {
-                this.time++;
-            }, 1000);
+            if (!this.isRunning) {
+                this.isRunning = true;
+                this.timer = setInterval(() => {
+                    this.time++;
+                }, 1000);
+            }
         },
         pauseTimer() {
-            this.isRunning = false;
-            clearInterval(this.timer);
+            if (this.isRunning) {
+                this.isRunning = false;
+                console.log(this.formatTime, '타이머')
+            }
         },
         resetTimer() {
             this.pauseTimer();
@@ -215,6 +252,7 @@ export default {
         padTime(time) {
             return (time < 10 ? '0' : '') + time;
         },
+
         //9x9 빈배열 만들기
         generateIntermediateSudoku() {
             const board = [];
@@ -225,7 +263,7 @@ export default {
                 }
             }
 
-            this.startTimer()
+            
             this.fill3x3Region(board, 0, 0);
             this.fill3x3Region(board, 3, 3);
             this.fill3x3Region(board, 6, 6);
@@ -284,7 +322,6 @@ export default {
             const emptyCell = this.findEmptyCell(board);
             if (!emptyCell) {
                 this.copy = board.map(obj => [...obj]);
-
 
                 return true; // 퍼즐이 모두 완성
             }
@@ -395,12 +432,12 @@ export default {
     mounted() {
 
         this.generateIntermediateSudoku(); // 페이지가 로드될 때 스도쿠 보드 생성
-        this.handleResetClick();
+        this.startTimer();
         window.addEventListener('resize', this.handleResize);
         this.handleResize();
 
     },
-    
+
 
 }
 </script>
@@ -413,47 +450,111 @@ export default {
             display: block;
             padding: 50px;
 
+            .modal {
+                position: absolute;
+                background-color: white;
+                border-radius: 20px;
+                border: 2px solid black;
+                top: 30%;
+                left: 30%;
+                height: 180px;
+
+                .modal-content {
+
+                    display: flex;
+                    flex-direction: column;
+                    padding: 20px;
+                    align-items: center;
+
+                    p {
+                        text-align: center;
+                        margin: 3px 0;
+                        font-weight: bold;
+                    }
+
+                    p:nth-of-type(1) {}
+
+                    input {
+                        margin-top: 5px;
+                        width: 150px;
+                        height: 20px;
+                        border-radius: 5px;
+                        border: 1px solid rgb(184, 184, 184);
+                    }
+
+                    .buttons {
+                        display: flex;
+                        justify-content: space-around;
+                        margin-top: 10px;
+
+                        button {
+                            width: 70px;
+                            background-color: black;
+                            border-radius: 10px;
+                            color: white;
+                            padding: 3px;
+                            border: 1px solid transparent;
+                        }
+
+                        button:hover {
+                            color: black;
+                            background-color: white;
+                            border: 1px solid black;
+                        }
+
+                        button:nth-of-type(1) {
+                            margin-right: 10px;
+                        }
+
+                        button:nth-of-type(2) {
+                            margin-left: 10px;
+                        }
+                    }
+
+                }
+            }
+
 
             .header {
                 display: flex;
                 justify-content: space-between;
 
-                    .sudoku_title {
-                        display: flex;
-                        margin-bottom: 20px;
+                .sudoku_title {
+                    display: flex;
+                    margin-bottom: 20px;
 
-                        p {
-                            font-size: 30px;
-                            font-family: "Luckiest Guy";
-                            margin: 0;
-                            margin-left: 20px;
-                        }
-
-                        p:nth-of-type(1) {
-                            color: red;
-                            margin: 0;
-                        }
-
-                        p:nth-of-type(2) {
-                            color: orange;
-                        }
-
-                        p:nth-of-type(3) {
-                            color: yellow;
-                        }
-
-                        p:nth-of-type(4) {
-                            color: green;
-                        }
-
-                        p:nth-of-type(5) {
-                            color: blue;
-                        }
-
-                        p:nth-of-type(6) {
-                            color: #4B0082;
-                        }
+                    p {
+                        font-size: 30px;
+                        font-family: "Luckiest Guy";
+                        margin: 0;
+                        margin-left: 20px;
                     }
+
+                    p:nth-of-type(1) {
+                        color: red;
+                        margin: 0;
+                    }
+
+                    p:nth-of-type(2) {
+                        color: orange;
+                    }
+
+                    p:nth-of-type(3) {
+                        color: yellow;
+                    }
+
+                    p:nth-of-type(4) {
+                        color: green;
+                    }
+
+                    p:nth-of-type(5) {
+                        color: blue;
+                    }
+
+                    p:nth-of-type(6) {
+                        color: #4B0082;
+                    }
+                }
 
                 .sudoku_select {
                     width: 25%;
@@ -462,11 +563,11 @@ export default {
 
                     .m_timer {
                         display: none;
-            
+
                         label {
                             margin: auto 0;
                         }
-            
+
                         p {
                             font-weight: bold;
                             font: 16px;
@@ -608,6 +709,7 @@ export default {
 
 
             }
+
             .m_keyboard {
                 display: none;
                 background-color: black;
@@ -630,6 +732,7 @@ export default {
 
     }
 }
+
 @media screen and (min-width: 768px) and (max-width: 920px) {
     .game {
         display: none;
@@ -638,6 +741,7 @@ export default {
             display: block;
             padding: 50px;
 
+
             .header {
                 display: flex;
                 flex-direction: column;
@@ -645,7 +749,7 @@ export default {
 
                 .sudoku_title {
                     display: flex;
-                    
+
                     justify-content: center;
 
                     p {
@@ -686,14 +790,14 @@ export default {
                     margin: 10px auto;
                     display: flex;
                     justify-content: space-between;
-                    
+
                     .m_timer {
                         display: flex;
-            
+
                         label {
                             margin: auto 0;
                         }
-            
+
                         p {
                             font-weight: bold;
                             font: 16px;
@@ -704,12 +808,12 @@ export default {
                         display: flex;
                         width: 80px;
                         height: 25px;
-                        
+
                         margin: auto 0;
                     }
 
                     #EX {
-                        
+
                         margin: auto 0;
                         width: 20px;
                         height: 20px;
@@ -787,7 +891,8 @@ export default {
 
 
             }
-            .keyboard{
+
+            .keyboard {
                 display: none;
             }
 
@@ -838,7 +943,7 @@ export default {
 
 
             }
-            
+
         }
 
         .timer {
@@ -846,5 +951,4 @@ export default {
         }
 
     }
-}
-</style>
+}</style>
