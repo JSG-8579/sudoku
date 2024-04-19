@@ -1,15 +1,18 @@
 <template>
     <div class="game active3">
-        <div class="modal" v-if="showModal">
-            <div class="modal-content">
-
-                <p>스도쿠를 성공적으로 완료했습니다!</p>
-                <p>난이도: {{ difficult }}</p>
-                <p>클리어 시간: {{ formatTime }}</p>
-                <input type="text" v-model="playerName" placeholder="이름을 입력하세요...">
-                <div class="buttons">
-                    <button @click="submitName">등록</button>
-                    <button @click="closeModal">취소</button>
+        <div class="modal_box" v-if="showModal">
+            <div class="modal" >
+                <div class="modal-content">
+                    <p>스도쿠를 성공적으로 완료했습니다!</p>
+                    <p>난이도: {{ difficult }}</p>
+                    <p>클리어 시간: {{ formatTime }}</p>
+                    <input type="text" v-model="playerName" placeholder="이름을 입력하세요...">
+                    <div class="buttons">
+                        <router-link to="Ranking">
+                            <button @click="submitName">등록</button>
+                        </router-link>
+                            <button @click="closeModal">취소</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,7 +108,7 @@
     </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
     data() {
         return {
@@ -116,7 +119,7 @@ export default {
             timer: null,
             time: 0,
             isRunning: false,
-            // 각 셀의 힌트 카운터 배열 초기화  
+            // 각 셀의 힌트 카운터 배열 초기화
             hintCounts: 0,
             screenWidth: window.innerWidth,
             elKey: null,
@@ -125,7 +128,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['difficult']),
+        ...mapState('sudokuRank', ['difficult']),
         formatTime() {
             const minutes = Math.floor(this.time / 60);
             const seconds = this.time % 60;
@@ -135,6 +138,7 @@ export default {
 
     },
     methods: {
+        ...mapMutations('sudokuRank', ['getData', 'postData', 'gameType']),
 
         openModal(a) {
             this.showModal = true;
@@ -142,15 +146,16 @@ export default {
         },
         closeModal() {
             this.showModal = false;
-            window.location.reload()
-            //페이지 리로딩 말구 딴거 없나?
+            this.$emit('test')
+
         },
         submitName() {
             //이걸로 보내기
-            console.log('플레이어 이름:', this.formatTime, this.playerName);
+            console.log('플레이어 이름:', this.formatTime, this.playerName, this.difficult);
+            this.postData({ 'difficult':this.difficult,'name': this.playerName, 'time': this.time })
             this.closeModal();
-            window.location.reload()
-            
+            // window.location.reload()
+
         },
 
         handleResize() {
@@ -219,7 +224,8 @@ export default {
             this.handleKeyClick()
         },
         handleDifficultyChange(e) {
-            this.$store.commit('gameType', e.target.value);
+            this.$store.commit('sudokuRank/gameType', e.target.value);
+            console.log(e.target.value,'dsadsa')
             this.generateIntermediateSudoku()
             this.resetTimer()
             this.handleKeyClick()
@@ -263,7 +269,7 @@ export default {
                 }
             }
 
-            
+
             this.fill3x3Region(board, 0, 0);
             this.fill3x3Region(board, 3, 3);
             this.fill3x3Region(board, 6, 6);
@@ -285,13 +291,13 @@ export default {
                     this.removeNumbers(board, 1)
                     break;
                 case 'normal':
-                    this.removeNumbers(board, 35)
+                    this.removeNumbers(board, 1)
                     break;
                 case 'hard':
-                    this.removeNumbers(board, 40)
+                    this.removeNumbers(board, 1)
                     break;
                 case 'extream':
-                    this.removeNumbers(board, 50)
+                    this.removeNumbers(board, 1)
                     break;
 
                 default:
@@ -450,67 +456,75 @@ export default {
             display: block;
             padding: 50px;
 
-            .modal {
+            .modal_box {
+                width: 100%;
+                height: 100%;
                 position: absolute;
-                background-color: white;
-                border-radius: 20px;
-                border: 2px solid black;
-                top: 30%;
-                left: 30%;
-                height: 180px;
+                background: rgba(0, 0, 0, 0.8);
+                top: 0;
+                left: 0;
+                .modal {
+                    position: absolute;
+                    background-color: white;
+                    border-radius: 20px;
+                    border: 2px solid black;
+                    top: 30%;
+                    left: 30%;
 
-                .modal-content {
 
-                    display: flex;
-                    flex-direction: column;
-                    padding: 20px;
-                    align-items: center;
+                    .modal-content {
 
-                    p {
-                        text-align: center;
-                        margin: 3px 0;
-                        font-weight: bold;
-                    }
-
-                    p:nth-of-type(1) {}
-
-                    input {
-                        margin-top: 5px;
-                        width: 150px;
-                        height: 20px;
-                        border-radius: 5px;
-                        border: 1px solid rgb(184, 184, 184);
-                    }
-
-                    .buttons {
                         display: flex;
-                        justify-content: space-around;
-                        margin-top: 10px;
+                        flex-direction: column;
+                        padding: 20px;
+                        align-items: center;
 
-                        button {
-                            width: 70px;
-                            background-color: black;
-                            border-radius: 10px;
-                            color: white;
-                            padding: 3px;
-                            border: 1px solid transparent;
+                        p {
+                            text-align: center;
+                            margin: 3px 0;
+                            font-weight: bold;
                         }
 
-                        button:hover {
-                            color: black;
-                            background-color: white;
-                            border: 1px solid black;
+                        p:nth-of-type(1) {}
+
+                        input {
+                            margin-top: 5px;
+                            width: 150px;
+                            height: 20px;
+                            border-radius: 5px;
+                            border: 1px solid rgb(184, 184, 184);
                         }
 
-                        button:nth-of-type(1) {
-                            margin-right: 10px;
+                        .buttons {
+                            display: flex;
+                            justify-content: space-around;
+                            margin-top: 10px;
+
+                            button {
+                                width: 70px;
+                                background-color: black;
+                                border-radius: 10px;
+                                color: white;
+                                padding: 3px;
+                                border: 1px solid transparent;
+                            }
+
+                            button:hover {
+                                color: black;
+                                background-color: white;
+                                border: 1px solid black;
+                            }
+
+                            button:nth-of-type(1) {
+                                margin-right: 10px;
+                            }
+
+                            button:nth-of-type(2) {
+                                margin-left: 10px;
+                            }
                         }
 
-                        button:nth-of-type(2) {
-                            margin-left: 10px;
-                        }
                     }
-
                 }
             }
 
@@ -951,4 +965,5 @@ export default {
         }
 
     }
-}</style>
+}
+</style>

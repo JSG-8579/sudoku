@@ -36,7 +36,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(['gameType']),
+        ...mapMutations('sudokuRank', ['gameType']),
         setDifficulty(value) {
             this.gameType(value),
                 this.$emit('test')
@@ -74,7 +74,7 @@ export default {
                 font-size: 26px;
                 font-family: "Luckiest Guy";
             }
-
+            
             button:hover {
                 cursor: pointer;
                 background-color: #ffffff;

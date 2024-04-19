@@ -1,6 +1,6 @@
 <template>
   <main>
-    <SudokuGame v-if="difficult" @test2="explanationOnOff"/>
+    <SudokuGame v-if="difficult" @test="setGame" @test2="explanationOnOff"/>
     <DifficultyText v-else @test="setGame"/>
     <ExplanationText :act="addclass" @test2="explanationOnOff"/>
   </main>
@@ -32,13 +32,13 @@ export default {
   },
   methods:{
     setGame(){
-      this.difficult = true
+      this.difficult = !this.difficult
     },
     explanationOnOff(){
-      console.log(this.active,'변경')
+      // console.log(this.active,'변경')
       this.active = !this.active
       this.addclass = (this.active ? 'active' : '')
-      console.log(this.addclass,'gdg')
+      // console.log(this.addclass,'gdg')
     }
   }
 }
