@@ -21,10 +21,11 @@
   
   
 </div>
-<h1>Page 구성</h1>
+<h1>Views 구성</h1>
 <ul>
   <li>HomeView.Vue</li>
   <li>SudokuGameView.Vue</li>
+  <li>GameRanking.Vue</li>
 </ul>
 <h1>Component 구성</h1>
 <ul>
@@ -32,13 +33,16 @@
   <li>DifficultyText.Vue</li>
   <li>ExplanationText.Vue</li>
 </ul>
-<h1>Page 설명</h1>
+<h1>Views 설명</h1>
 <ul>
-  <li>App.js로 공통되는 header를 만들고, 각각의 페이지를 컴포넌트화 작업을 하여 url로 페이지가 전환되도록 하였습니다. </li>
-  <li>swiper를 사용하여 Auto 슬라이드 기능을 구현했습니다.</li>
-  <li>map구문으로 관련된 데이터들을 list화 시키고, Link를 사용하여 페이지 이동 및 관련 사이트 연결 작업을 했습니다. </li>
-  <li>반응형 작업을 PC로 시작하여 Pad, Moblie까지 진행하였습니다.</li>
+  <li>App.Vue로 공통되는 body와 main의 위치 및 크기를 잡고, 각각의 페이지를 Views로 url로 페이지가 전환되도록 하였습니다. </li>
+  <li>Views인 SudokuGameView에 게임플레이, 난이도선택, 룰 설명 페이지를 component화 작업을 하였습니다.</li>
+  <li>methods로 스도쿠 보드판을 생성하는 함수를 만들었고, mounted로 페이지가 로드 될때마다 스도쿠 보드생성 함수를 실행하도록 하였습니다.</li>
+  <li>난이도 선택에 따라 vuex인 store에서 difficult 값을 변환하면서 난이도에 맞는 스도쿠판이 나오도록 했습니다.</li>
+  <li>게임이 끝나면 MySQL데이터 서버를 활용하여 입력한 이름과 타이머의 시간을 가지고 랭킹리스트가 출력되게 하였습니다.</li>
 </ul>
 <h1>작업 후기</h1>
-<p>자신을 소개하는 포트폴리오를 만드는데에 많이 낯설었고, React로 나만의 사이트를 만드는것에 대해 어려움이 </br>
-있었지만, 팀 프로젝트를 진행하면서 기초가 많이 다져졌고, 포트폴리오 안에 Project 컨텐츠가 추가되는것이 보람을 많이 느꼇습니다.</p>
+<p>vue로 간단한 미니게임을 만들어 보기위해서 예전에 제가 자주 플레이 했던 스도쿠라는 게임을 구현하려고 했습니다.</br>
+간단해 보였지만, 이 스도쿠 보드판을 생성하는데 여러가지의 함수가 적용되는걸 알았고, 이것을 Vue 환경에서 적용하기위해</br>
+노력을 많이 했습니다. 랭킹 시스템을 추가하면서 MySQL이라는 데이터서버를 활용하였고, 이 과정속에서도 많은 공부가 되었고,</br>
+Vue를 알아가는데 도움이 많이 되었습니다.</p>
