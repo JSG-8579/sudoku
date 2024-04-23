@@ -104,7 +104,8 @@ export default {
         .rank_list {
             margin: 0 auto;
             width: 80%;
-            height: 450px;
+            padding: 20px;
+            height: 400px;
             display: flex;
             justify-content: space-between;
             background-color: #cbcbcb;
@@ -137,7 +138,7 @@ export default {
 
 
                 ol {
-                    padding: 15px;
+                    padding: 0;
 
                     li {
                         margin: 20px;
