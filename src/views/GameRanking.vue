@@ -12,9 +12,8 @@
                 <div v-for="(items, idx) in allData" :key='idx'>
                     <p id="dif">{{ Object.keys(items)[0] }}</p>
                     <ol>
-                        <li v-for="(item, k) in items[Object.keys(items)[0]]" :key='k'>
-                            {{ item.name }} {{ formatTime(item.time) }}
-                        </li>
+                        <li v-for="(item, k) in items[Object.keys(items)[0]]" :key='k'> {{ item.name }}  {{
+                formatTime(item.time) }} </li>
                     </ol>
                 </div>
             </div>
@@ -32,7 +31,7 @@ export default {
     },
     computed: {
         ...mapState('sudokuRank', ['data']),
-        
+
     },
     created() {
         this.getData()
@@ -107,45 +106,48 @@ export default {
             width: 80%;
             height: 450px;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             background-color: #cbcbcb;
             border-radius: 20px;
 
-
-            #dif {
-                font-family: "Luckiest Guy";
-                text-align: center;
-                font-size: 30px;
-            }
-
-            .rank_list>#dif:nth-of-type(1) {
-                color: #2DE000;
-            }
-
-            div>#dif:nth-of-type(2) {
-                color: #000000;
-            }
-
-            div>#dif:nth-of-type(3) {
-                color: #4F95FF;
-            }
-
-            div>#dif:nth-of-type(4) {
-                color: #FF0000;
-            }
-
-
-
-            ol {
-                padding: 15px;
-
-
-                li {
-                    margin: 20px;
-                    font-size: 20px;
+            div {
+                
+                #dif {
+                    font-family: "Luckiest Guy";
+                    text-align: center;
+                    font-size: 30px;
                 }
-            }
 
+                .rank_list>#dif:nth-of-type(1) {
+                    color: #2DE000;
+                }
+
+                div>#dif:nth-of-type(2) {
+                    color: #000000;
+                }
+
+                div>#dif:nth-of-type(3) {
+                    color: #4F95FF;
+                }
+
+                div>#dif:nth-of-type(4) {
+                    color: #FF0000;
+                }
+
+
+
+                ol {
+                    padding: 15px;
+
+                    li {
+                        margin: 20px;
+                        font-size: 15px;
+                        font-weight: bold;
+                        margin-bottom: 40px;
+                    }
+                }
+
+            }
         }
     }
 }

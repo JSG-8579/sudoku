@@ -298,7 +298,7 @@ export default {
             
             switch (type) {
                 case 'easy':
-                    this.removeNumbers(board, 1)
+                    this.removeNumbers(board, 25)
                     break;
                 case 'normal':
                     this.removeNumbers(board, 30)
@@ -307,7 +307,7 @@ export default {
                     this.removeNumbers(board, 40)
                     break;
                 case 'extream':
-                    this.removeNumbers(board, 1)
+                    this.removeNumbers(board, 50)
                     break;
 
                 default:
