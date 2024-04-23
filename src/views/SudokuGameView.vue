@@ -35,10 +35,10 @@ export default {
       this.difficult = !this.difficult
     },
     explanationOnOff(){
-      // console.log(this.active,'변경')
+      
       this.active = !this.active
       this.addclass = (this.active ? 'active' : '')
-      // console.log(this.addclass,'gdg')
+      
     }
   }
 }

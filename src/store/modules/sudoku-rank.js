@@ -6,7 +6,7 @@ export const sudokuRank = {
 
     state: {
         difficult:'easy',
-        data:''
+        data:[]
     },
     getters: {
     },
@@ -17,13 +17,13 @@ export const sudokuRank = {
         },
 
         async postData(state, value){
-          console.log(value, '추가값')
+          
             await fetch.post(value);
             const res = await fetch.get();
             state.data = res; 
         },
         async gameType(state, value){
-          console.log(state,'난이독밧')
+          
           state.difficult=value
         }
 

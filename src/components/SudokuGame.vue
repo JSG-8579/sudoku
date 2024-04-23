@@ -1,17 +1,17 @@
 <template>
     <div class="game active3">
         <div class="modal_box" v-if="showModal">
-            <div class="modal" >
+            <div class="modal">
                 <div class="modal-content">
                     <p>스도쿠를 성공적으로 완료했습니다!</p>
                     <p>난이도: {{ difficult }}</p>
                     <p>클리어 시간: {{ formatTime }}</p>
-                    <input type="text" v-model="playerName" placeholder="이름을 입력하세요...">
+                    <input type="text" maxlength='4' v-model="playerName" placeholder="이름을 입력하세요...">
                     <div class="buttons">
                         <router-link to="Ranking">
                             <button @click="submitName">등록</button>
                         </router-link>
-                            <button @click="closeModal">취소</button>
+                        <button @click="closeModal">취소</button>
                     </div>
                 </div>
             </div>
@@ -102,8 +102,13 @@
             </table>
         </div>
         <div class="timer">
-            <label for="Timer"><img src="../../public/img/timer.png" alt=""></label>
-            <p>{{ formatTime }}</p>
+            <div>
+                <label for="Timer"><img src="../../public/img/timer.png" alt=""></label>
+                <p>{{ formatTime }}</p>
+            </div>
+            <router-link to="Ranking">
+                <p id="rank">RANKING -></p>
+            </router-link>
         </div>
     </div>
 </template>
@@ -151,8 +156,8 @@ export default {
         },
         submitName() {
             //이걸로 보내기
-            console.log('플레이어 이름:', this.formatTime, this.playerName, this.difficult);
-            this.postData({ 'difficult':this.difficult,'name': this.playerName, 'time': this.time })
+            
+            this.postData({ 'difficult': this.difficult, 'name': this.playerName, 'time': this.time })
             this.closeModal();
             // window.location.reload()
 
@@ -163,7 +168,7 @@ export default {
             this.handleKeyClick()
         },
         exOn() {
-            console.log('클릭')
+            
             this.$emit('test2')
         },
         device(n) {
@@ -197,7 +202,7 @@ export default {
                         this.elKey.forEach((td2, idx2) => {
                             td2.onclick = () => {
 
-                                if (idx2 < 9) {
+                                if (idx2 < 9 ) {
                                     this.board[i][j] = idx2 + 1;
                                     td.innerHTML = idx2 + 1
                                     this.copy2 = this.board.map(obj => [...obj]);
@@ -206,10 +211,16 @@ export default {
                                     td.innerHTML = ''
                                 } else if (idx2 == 11 && this.hintCounts < 3) {
                                     td.innerHTML = this.copy[i][j]
+                                    this.board[i][j] = this.copy[i][j]
                                     this.hintCounts++
+                                    this.copy2 = this.board.map(obj => [...obj]);
                                     alert(`힌트가 ${3 - this.hintCounts}개 남았습니다.`)
+                                    this.answer(this.copy, this.copy2)
+                                    
                                 } else if (idx2 == 11 && this.hintCounts == 3) {
                                     alert('힌트를 다 쓰셨습니다.')
+                                }else if(JSON.stringify(this.copy) == JSON.stringify(this.copy2)){
+                                    alert('정답을 다 맞추셨습니다.')
                                 }
 
                             }
@@ -225,7 +236,6 @@ export default {
         },
         handleDifficultyChange(e) {
             this.$store.commit('sudokuRank/gameType', e.target.value);
-            console.log(e.target.value,'dsadsa')
             this.generateIntermediateSudoku()
             this.resetTimer()
             this.handleKeyClick()
@@ -248,7 +258,7 @@ export default {
         pauseTimer() {
             if (this.isRunning) {
                 this.isRunning = false;
-                console.log(this.formatTime, '타이머')
+                
             }
         },
         resetTimer() {
@@ -285,19 +295,19 @@ export default {
         },
         //빈 배열에 섞은 숫자 일부분 채우기 (0,0),(3,3),(6,6)기준 각각 9칸씩
         difficultSelect(type, board) {
-            console.log(this.difficult, '타입')
+            
             switch (type) {
                 case 'easy':
-                    this.removeNumbers(board, 1)
+                    this.removeNumbers(board, 25)
                     break;
                 case 'normal':
-                    this.removeNumbers(board, 1)
+                    this.removeNumbers(board, 30)
                     break;
                 case 'hard':
-                    this.removeNumbers(board, 1)
+                    this.removeNumbers(board, 40)
                     break;
                 case 'extream':
-                    this.removeNumbers(board, 1)
+                    this.removeNumbers(board, 50)
                     break;
 
                 default:
@@ -463,6 +473,7 @@ export default {
                 background: rgba(0, 0, 0, 0.8);
                 top: 0;
                 left: 0;
+
                 .modal {
                     position: absolute;
                     background-color: white;
@@ -733,15 +744,31 @@ export default {
 
         .timer {
             display: flex;
+            justify-content: space-between;
 
-            label {
-                margin: auto 0;
+            div {
+                display: flex;
+
+                label {
+                    margin: auto 0;
+                }
+
+                p {
+                    font-weight: bold;
+                    font: 16px;
+                }
+
             }
 
-            p {
-                font-weight: bold;
-                font: 16px;
+            a {
+                text-decoration: none;
+                color: black;
+                #rank {
+                    font-family: "Luckiest Guy";
+                }
             }
+
+
         }
 
     }

@@ -5,14 +5,15 @@
                 <p class="back"> ← </p>
             </router-link>
             <h1 id="title">Ranking</h1>
-            <div class="rank_list">
-                <div v-if="allData==null">
-                    <p>데이터가 없습니다</p>
-                </div>
-                <div v-else v-for="(items, idx) in allData" :key='idx' >
+            <div v-if="!data.length" class="no-data">
+                <p>데이터가 없습니다</p>
+            </div>
+            <div v-else class="rank_list">
+                <div v-for="(items, idx) in allData" :key='idx'>
                     <p id="dif">{{ Object.keys(items)[0] }}</p>
                     <ol>
-                        <li v-for="(item, k) in items[Object.keys(items)[0]]" :key='k'>{{ item.name }} {{ item.time }}
+                        <li v-for="(item, k) in items[Object.keys(items)[0]]" :key='k'>
+                            {{ item.name }} {{ formatTime(item.time) }}
                         </li>
                     </ol>
                 </div>
@@ -26,27 +27,34 @@ export default {
     name: 'GameRanking',
     data() {
         return {
-            allData: null
+            allData: null,
         }
     },
     computed: {
         ...mapState('sudokuRank', ['data']),
+        
     },
     created() {
         this.getData()
-        console.log('1111-----------', this.allData)
-        
+
     },
     methods: {
         ...mapMutations('sudokuRank', ['getData']),
+        padTime(time) {
+            return (time < 10 ? '0' : '') + time;
+        },
+        formatTime(timeInSeconds) {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = timeInSeconds % 60;
+            return `${this.padTime(minutes)}:${this.padTime(seconds)}`;
+        },
+
         filteredItems(items) {
             return items.slice(0, 5);
         },
-        rank(){
-            console.log(this.data,'==========')
+        rank() {
             const cate = [{ 'easy': [] }, { 'normal': [] }, { 'hard': [] }, { 'extream': [] }]
             const dataArray = Object.values(this.data); // 객체를 배열로 변환
-            console.log(dataArray, '변환')
             dataArray.forEach((obj1) => {
                 switch (obj1.difficult) {
                     case 'easy': cate[0].easy.push(obj1); break;
@@ -60,12 +68,11 @@ export default {
                 key[Object.keys(key)] = key[Object.keys(key)].slice(0, 5);
             });
             this.allData = cate
-            console.log(this.allData, 'dsadsa')
         }
 
     },
-    watch:{
-        data(){ this.rank() }
+    watch: {
+        data() { this.rank() }
     }
 }
 </script>
@@ -89,9 +96,20 @@ export default {
             padding-top: 20px;
         }
 
+        .no-data {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 20px;
+        }
+
         .rank_list {
+            margin: 0 auto;
+            width: 80%;
+            height: 450px;
             display: flex;
             justify-content: space-around;
+            background-color: #cbcbcb;
+            border-radius: 20px;
 
 
             #dif {
@@ -115,13 +133,12 @@ export default {
             div>#dif:nth-of-type(4) {
                 color: #FF0000;
             }
-            
+
 
 
             ol {
                 padding: 15px;
-                background-color: #D9D9D9;
-                border-radius: 20px;
+
 
                 li {
                     margin: 20px;
